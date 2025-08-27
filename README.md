@@ -1,1 +1,1 @@
-# vbsetup
+# Voicebot Initial Setup Guide
