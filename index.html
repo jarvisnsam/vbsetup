@@ -1,1 +1,781 @@
-Voicebot Initial Setup Guide
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voicebot Setup Guide Sample</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f9fafb;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #0f172a;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .header h1 {
+            font-size: 2.4em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.2em;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.6em;
+            color: #0f172a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0f172a;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .section-title::before {
+            content: "🔧";
+            margin-right: 10px;
+            font-size: 1.3em;
+        }
+
+        .section-title.hosts::before { content: "🌐"; }
+        .section-title.ssl::before { content: "🔒"; }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1em;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0f172a;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .ssl-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover {
+            background: #f0f8ff;
+        }
+
+        .file-upload-area p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .file-button {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 12px;
+        }
+
+        .file-button:hover {
+            background: #1e293b;
+        }
+
+        .next-button {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .next-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .next-button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .next-button:disabled {
+            background: #bdc3c7 !important;
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #0f172a, #2ecc71);
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .completion-section {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .completion-title {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .completion-title::before {
+            content: "✅ ";
+            font-size: 1.2em;
+        }
+
+        .form-group input.valid,
+        .form-group textarea.valid {
+            border-color: #27ae60;
+        }
+
+        .form-group input.invalid,
+        .form-group textarea.invalid {
+            border-color: #e74c3c;
+        }
+
+        /* Mobile Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                margin: 0;
+                border-radius: 8px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+
+            .header {
+                padding: 20px 15px;
+                border-radius: 8px 8px 0 0;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+                margin-bottom: 8px;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+
+            .form-container {
+                padding: 20px 15px;
+            }
+
+            .section-title {
+                font-size: 1.3em;
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+
+            .section-title::before {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+
+            .form-group label {
+                font-size: 0.9em;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 10px 12px;
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+
+            .form-group textarea {
+                min-height: 100px;
+                font-size: 14px;
+            }
+
+            .ssl-section {
+                padding: 15px;
+            }
+
+            .file-upload-area {
+                padding: 15px;
+            }
+
+            .file-upload-area p {
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+
+            .file-button {
+                padding: 6px 12px;
+                font-size: 11px;
+                margin: 2px;
+            }
+
+            .next-button {
+                padding: 12px 30px;
+                font-size: 1em;
+                margin-top: 20px;
+            }
+
+            .progress-text {
+                font-size: 0.9em;
+            }
+
+            .completion-section {
+                padding: 20px 15px;
+            }
+
+            .completion-title {
+                font-size: 1.5em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .form-container {
+                padding: 15px 10px;
+            }
+
+            .section-title {
+                font-size: 1.2em;
+            }
+
+            .file-button {
+                display: block;
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .next-button {
+                padding: 12px 20px;
+                font-size: 0.95em;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .header {
+                padding: 15px 10px;
+            }
+
+            .header h1 {
+                font-size: 1.3em;
+            }
+
+            .form-container {
+                padding: 12px 8px;
+            }
+
+            .ssl-section {
+                padding: 12px;
+            }
+
+            .file-upload-area {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Voicebot Setup Guide Sample</h1>
+            <p>Configure your voicebot services and SSL certificates</p>
+        </div>
+
+        <div class="form-container">
+            <!-- Intro Section -->
+            <div id="introSection" class="section active">
+                <h2 class="section-title">🚀 Voicebot Configuration</h2>
+                
+                <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin-bottom: 30px;">
+                    <h3 style="color: #2c3e50; margin-bottom: 15px;">What You Need to Prepare</h3>
+                    <div style="background: white; padding: 20px; border-radius: 6px; border-left: 4px solid #0f172a; margin-bottom: 25px;">
+                        <div style="font-size: 16px; line-height: 1.8; color: #2c3e50;">
+                            • Reserve 1 static IP address for MAC address: <span id="macAddress" style="font-family: monospace; background: #f1f3f4; padding: 4px 8px; border-radius: 4px; font-weight: bold;">1c:1d:d3:e2:54:fc</span><br><br>
+                            • 4 hostnames for Main, API, SSO, Proxy + 4 DNS A records point to same static IP<br><br>
+                            • 1 Wildcard SSL Certificate for all services
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-text" id="progressText" style="display: none;">Step 1 of 2</div>
+            <div class="progress-bar" id="progressBarContainer" style="display: none;">
+                <div class="progress-fill" id="progressFill" style="width: 50%;"></div>
+            </div>
+
+            <!-- Completion Section -->
+            <div id="completionSection" class="completion-section">
+                <div class="completion-title">Setup Complete!</div>
+            </div>
+
+            <!-- All Services Section -->
+            <div id="allServicesSection" class="section">
+                <h2 class="section-title hosts">All Services Configuration</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="MAIN_HOST">Main Hostname</label>
+                        <input type="text" id="MAIN_HOST" name="MAIN_HOST" value="vb.test.ai" required data-field-type="hostname">
+                    </div>
+                    <div class="form-group">
+                        <label for="API_HOST">API Hostname</label>
+                        <input type="text" id="API_HOST" name="API_HOST" value="api.vb.test.ai" required data-field-type="hostname">
+                    </div>
+                    <div class="form-group">
+                        <label for="SSO_HOST">SSO Hostname</label>
+                        <input type="text" id="SSO_HOST" name="SSO_HOST" value="sso.vb.test.ai" required data-field-type="hostname">
+                    </div>
+                    <div class="form-group">
+                        <label for="PROXY_HOST">Proxy Hostname</label>
+                        <input type="text" id="PROXY_HOST" name="PROXY_HOST" value="proxy.vb.test.ai" required data-field-type="hostname">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wildcard Certificate Section -->
+            <div id="wildcardSection" class="section">
+                <h2 class="section-title ssl">Wildcard SSL Certificate</h2>
+                <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin-bottom: 20px;">
+                    <p style="color: #2c3e50; margin-bottom: 15px; line-height: 1.6;">
+                        Configure your wildcard SSL certificate that will be used for all services.
+                    </p>
+                </div>
+                
+                <div class="ssl-section">
+                    <div class="form-group">
+                        <label for="SSL_CERT_WILDCARD">Wildcard SSL Certificate Content (.crt) <span style="color: red;">*</span></label>
+                        <textarea id="SSL_CERT_WILDCARD" name="SSL_CERT_WILDCARD" required 
+                                  placeholder="-----BEGIN CERTIFICATE-----&#10;MIIDbTCCAlWgAwIBAgIJAKgZz8Qj6MUBMA0GCSqGSIb3DQEBCwUAME0xCzAJBgNV...&#10;-----END CERTIFICATE-----"
+                                  data-field-type="ssl-cert"></textarea>
+                        <div class="file-upload-area">
+                            <p>You can paste certificate content or upload certificate file</p>
+                            <button type="button" class="file-button" onclick="loadFile('SSL_CERT_WILDCARD')">Choose .crt File</button>
+                            <input type="file" id="certFileWILDCARD" accept=".crt,.pem" style="display: none;" onchange="handleFileLoad(this, 'SSL_CERT_WILDCARD')">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="SSL_KEY_WILDCARD">Wildcard SSL Private Key Content (.key) <span style="color: red;">*</span></label>
+                        <textarea id="SSL_KEY_WILDCARD" name="SSL_KEY_WILDCARD" required 
+                                  placeholder="-----BEGIN PRIVATE KEY-----&#10;MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC8pYmlqvx...&#10;-----END PRIVATE KEY-----"
+                                  data-field-type="ssl-key"></textarea>
+                        <div class="file-upload-area">
+                            <p>You can paste private key content or upload private key file</p>
+                            <button type="button" class="file-button" onclick="loadFile('SSL_KEY_WILDCARD')">Choose .key File</button>
+                            <input type="file" id="keyFileWILDCARD" accept=".key,.pem" style="display: none;" onchange="handleFileLoad(this, 'SSL_KEY_WILDCARD')">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Button -->
+            <button type="button" id="nextButton" class="next-button" onclick="nextPart()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration constants
+        const CONFIG = {
+            services: [
+                {id: 'main', name: 'Main', defaultHost: 'vb.test.ai'},
+                {id: 'api', name: 'API', defaultHost: 'api.vb.test.ai'},
+                {id: 'sso', name: 'SSO', defaultHost: 'sso.vb.test.ai'},
+                {id: 'proxy', name: 'Proxy', defaultHost: 'proxy.vb.test.ai'}
+            ],
+            validation: {
+                cert: /-----BEGIN CERTIFICATE-----[\s\S]*?-----END CERTIFICATE-----/,
+                key: /-----BEGIN PRIVATE KEY-----[\s\S]*?-----END PRIVATE KEY-----/
+            },
+            stepNames: ['All Services', 'SSL Certificate']
+        };
+
+        let currentPart = 0; // 0: intro, 1: hostnames, 2: ssl
+        const totalParts = 2;
+
+        function validateField(element) {
+            const content = element.value.trim();
+            const fieldType = element.dataset.fieldType;
+            
+            if (!content) {
+                element.classList.remove('valid', 'invalid');
+                removeValidationMessage(element.id);
+                validateCurrentStepAndUpdateButton();
+                return;
+            }
+            
+            let isValid = false;
+            let message = '';
+            
+            if (fieldType === 'ssl-cert') {
+                isValid = CONFIG.validation.cert.test(content);
+                message = isValid ? 
+                    'Valid SSL certificate format' : 
+                    'Invalid SSL certificate format. Must start with -----BEGIN CERTIFICATE----- and end with -----END CERTIFICATE-----';
+            } else if (fieldType === 'ssl-key') {
+                isValid = CONFIG.validation.key.test(content);
+                message = isValid ? 
+                    'Valid PKCS#8 private key format' : 
+                    'Invalid private key format. Must be PKCS#8 format (-----BEGIN PRIVATE KEY----- ... -----END PRIVATE KEY-----)';
+            }
+            
+            element.classList.toggle('valid', isValid);
+            element.classList.toggle('invalid', !isValid);
+            showValidationMessage(element.id, message, isValid ? 'success' : 'error');
+            
+            setTimeout(() => validateCurrentStepAndUpdateButton(), 100);
+        }
+
+        function validateCurrentStepAndUpdateButton() {
+            const button = document.getElementById('nextButton');
+            let isValid = true;
+            
+            if (currentPart === 0) {
+                isValid = true; // Intro section always valid
+            } else if (currentPart === 1) {
+                // Step 1: Check all hostname fields
+                const hostnameFields = ['MAIN_HOST', 'API_HOST', 'SSO_HOST', 'PROXY_HOST'];
+                for (const fieldId of hostnameFields) {
+                    const element = document.getElementById(fieldId);
+                    if (!element?.value.trim()) {
+                        isValid = false;
+                        break;
+                    }
+                }
+            } else if (currentPart === 2) {
+                // Step 2: Check SSL certificate and key
+                const certElement = document.getElementById('SSL_CERT_WILDCARD');
+                const keyElement = document.getElementById('SSL_KEY_WILDCARD');
+                
+                const cert = certElement?.value.trim() || '';
+                const key = keyElement?.value.trim() || '';
+                
+                if (!cert || !key) {
+                    isValid = false;
+                } else {
+                    const certValid = CONFIG.validation.cert.test(cert);
+                    const keyValid = CONFIG.validation.key.test(key);
+                    isValid = certValid && keyValid;
+                }
+            }
+            
+            // Update button state
+            button.disabled = !isValid;
+            button.style.background = isValid ? 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)' : '#bdc3c7';
+            button.style.opacity = isValid ? '1' : '0.5';
+            button.style.cursor = isValid ? 'pointer' : 'not-allowed';
+            button.style.pointerEvents = isValid ? 'auto' : 'none';
+            button.style.boxShadow = isValid ? '0 4px 15px rgba(39, 174, 96, 0.3)' : 'none';
+        }
+
+        function showValidationMessage(targetId, message, type) {
+            removeValidationMessage(targetId);
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.setAttribute('data-validation-for', targetId);
+            msgDiv.style.cssText = `
+                margin-top: 5px; padding: 8px 12px; border-radius: 4px; font-size: 12px;
+                background: ${type === 'success' ? '#d4edda' : '#f8d7da'};
+                color: ${type === 'success' ? '#155724' : '#721c24'};
+                border: 1px solid ${type === 'success' ? '#c3e6cb' : '#f5c6cb'};
+            `;
+            msgDiv.innerHTML = (type === 'success' ? '✅ ' : '❌ ') + message;
+            
+            const textarea = document.getElementById(targetId);
+            textarea.parentNode.insertBefore(msgDiv, textarea.nextSibling);
+        }
+
+        function removeValidationMessage(targetId) {
+            const existingMsg = document.querySelector(`[data-validation-for="${targetId}"]`);
+            if (existingMsg) existingMsg.remove();
+        }
+
+        function updateProgress() {
+            if (currentPart === 0) return;
+            
+            const progressPercent = (currentPart / totalParts) * 100;
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+            document.getElementById('progressText').textContent = 
+                `Step ${currentPart} of ${totalParts}: ${CONFIG.stepNames[currentPart - 1]}`;
+        }
+
+        function nextPart() {
+            const button = document.getElementById('nextButton');
+            if (button.disabled) return false;
+            
+            if (currentPart === 0) {
+                // From intro to step 1
+                document.getElementById('introSection').classList.remove('active');
+                document.getElementById('progressText').style.display = 'block';
+                document.getElementById('progressBarContainer').style.display = 'block';
+                
+                currentPart = 1;
+                document.getElementById('allServicesSection').classList.add('active');
+                updateProgress();
+                setTimeout(() => validateCurrentStepAndUpdateButton(), 100);
+                return;
+            }
+
+            // Hide current section
+            const currentSectionName = currentPart === 1 ? 'allServicesSection' : 'wildcardSection';
+            document.getElementById(currentSectionName).classList.remove('active');
+            
+            currentPart++;
+
+            if (currentPart > totalParts) {
+                generateConfiguration();
+                return;
+            }
+
+            // Show next section
+            const nextSectionName = currentPart === 2 ? 'wildcardSection' : '';
+            document.getElementById(nextSectionName).classList.add('active');
+            updateProgress();
+            
+            if (currentPart === totalParts) {
+                button.textContent = 'Generate Configuration';
+            }
+            
+            setTimeout(() => validateCurrentStepAndUpdateButton(), 100);
+        }
+
+        function loadFile(targetId) {
+            const suffix = targetId.split('_')[2];
+            const fileType = targetId.includes('CERT') ? 'cert' : 'key';
+            const fileInputId = `${fileType}File${suffix}`;
+            document.getElementById(fileInputId).click();
+        }
+
+        function handleFileLoad(input, targetId) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const textarea = document.getElementById(targetId);
+                textarea.value = e.target.result;
+                validateField(textarea);
+            };
+            reader.readAsText(file);
+        }
+
+        function generateConfiguration() {
+            const config = {
+                timestamp: new Date().toISOString(),
+                certMode: 'wildcard',
+                hostnames: {},
+                certificates: {
+                    wildcard: {
+                        cert: document.getElementById('SSL_CERT_WILDCARD').value,
+                        key: document.getElementById('SSL_KEY_WILDCARD').value
+                    }
+                }
+            };
+
+            // Collect hostnames
+            CONFIG.services.forEach(service => {
+                const hostId = `${service.id.toUpperCase()}_HOST`;
+                config.hostnames[hostId] = document.getElementById(hostId).value;
+            });
+
+            // Final validation
+            if (!validateConfiguration(config)) return;
+
+            // Download and complete
+            const configJson = JSON.stringify(config, null, 2);
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            downloadFile(configJson, `voicebot-config-${timestamp}.json`);
+            showCompletion();
+        }
+
+        function validateConfiguration(config) {
+            // Check hostnames
+            for (const [key, value] of Object.entries(config.hostnames)) {
+                if (!value?.trim()) {
+                    alert(`Please enter a valid ${key.replace('_HOST', '')} hostname`);
+                    return false;
+                }
+            }
+
+            // Check wildcard certificate
+            const { cert, key } = config.certificates.wildcard;
+            if (!cert?.trim() || !key?.trim()) {
+                alert('SSL Certificate and Private Key cannot be empty.');
+                return false;
+            }
+            
+            if (!CONFIG.validation.cert.test(cert) || !CONFIG.validation.key.test(key)) {
+                alert('Invalid SSL certificate or private key format.');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function showCompletion() {
+            document.getElementById('progressText').style.display = 'none';
+            document.getElementById('progressBarContainer').style.display = 'none';
+            document.getElementById('completionSection').style.display = 'block';
+            document.getElementById('nextButton').style.display = 'none';
+            
+            setTimeout(() => {
+                alert('Configuration file generated successfully!\n\nThe system will automatically process your configuration in the background.');
+            }, 500);
+        }
+
+        function downloadFile(content, filename) {
+            const blob = new Blob([content], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // MAC address will be pre-injected by AppleScript template processing
+        function getMacAddress() {
+            // This function is no longer needed as MAC address is pre-injected
+            const macElement = document.getElementById('macAddress');
+            return macElement ? macElement.textContent : "MAC address not available";
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // MAC address is already pre-injected by AppleScript, no additional processing needed
+            
+            // Add event listeners to form fields
+            document.querySelectorAll('textarea[data-field-type^="ssl-"]').forEach(textarea => {
+                ['input', 'blur'].forEach(event => {
+                    textarea.addEventListener(event, () => validateField(textarea));
+                });
+            });
+            
+            document.querySelectorAll('input[data-field-type="hostname"]').forEach(input => {
+                ['input', 'blur'].forEach(event => {
+                    input.addEventListener(event, () => validateCurrentStepAndUpdateButton());
+                });
+            });
+            
+            validateCurrentStepAndUpdateButton();
+        });
+    </script>
+</body>
+</html>
