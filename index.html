@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voicebot Setup Guide Sample</title>
+    <title>Voicebot Setup</title>
     <style>
         * {
             margin: 0;
@@ -242,158 +242,12 @@
         .form-group textarea.invalid {
             border-color: #e74c3c;
         }
-
-        /* Mobile Responsive Design */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                margin: 0;
-                border-radius: 8px;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            }
-
-            .header {
-                padding: 20px 15px;
-                border-radius: 8px 8px 0 0;
-            }
-
-            .header h1 {
-                font-size: 1.8em;
-                margin-bottom: 8px;
-            }
-
-            .header p {
-                font-size: 1em;
-            }
-
-            .form-container {
-                padding: 20px 15px;
-            }
-
-            .section-title {
-                font-size: 1.3em;
-                flex-direction: column;
-                text-align: center;
-                align-items: center;
-            }
-
-            .section-title::before {
-                margin-right: 0;
-                margin-bottom: 5px;
-            }
-
-            .form-group label {
-                font-size: 0.9em;
-            }
-
-            .form-group input,
-            .form-group textarea {
-                padding: 10px 12px;
-                font-size: 16px; /* Prevent zoom on iOS */
-            }
-
-            .form-group textarea {
-                min-height: 100px;
-                font-size: 14px;
-            }
-
-            .ssl-section {
-                padding: 15px;
-            }
-
-            .file-upload-area {
-                padding: 15px;
-            }
-
-            .file-upload-area p {
-                font-size: 0.9em;
-                margin-bottom: 8px;
-            }
-
-            .file-button {
-                padding: 6px 12px;
-                font-size: 11px;
-                margin: 2px;
-            }
-
-            .next-button {
-                padding: 12px 30px;
-                font-size: 1em;
-                margin-top: 20px;
-            }
-
-            .progress-text {
-                font-size: 0.9em;
-            }
-
-            .completion-section {
-                padding: 20px 15px;
-            }
-
-            .completion-title {
-                font-size: 1.5em;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 1.5em;
-            }
-
-            .header p {
-                font-size: 0.9em;
-            }
-
-            .form-container {
-                padding: 15px 10px;
-            }
-
-            .section-title {
-                font-size: 1.2em;
-            }
-
-            .file-button {
-                display: block;
-                width: 100%;
-                margin: 5px 0;
-            }
-
-            .next-button {
-                padding: 12px 20px;
-                font-size: 0.95em;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .header {
-                padding: 15px 10px;
-            }
-
-            .header h1 {
-                font-size: 1.3em;
-            }
-
-            .form-container {
-                padding: 12px 8px;
-            }
-
-            .ssl-section {
-                padding: 12px;
-            }
-
-            .file-upload-area {
-                padding: 12px;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Voicebot Setup Guide Sample</h1>
+            <h1>Voicebot Setup</h1>
             <p>Configure your voicebot services and SSL certificates</p>
         </div>
 
@@ -406,7 +260,7 @@
                     <h3 style="color: #2c3e50; margin-bottom: 15px;">What You Need to Prepare</h3>
                     <div style="background: white; padding: 20px; border-radius: 6px; border-left: 4px solid #0f172a; margin-bottom: 25px;">
                         <div style="font-size: 16px; line-height: 1.8; color: #2c3e50;">
-                            • Reserve 1 static IP address for MAC address: <span id="macAddress" style="font-family: monospace; background: #f1f3f4; padding: 4px 8px; border-radius: 4px; font-weight: bold;">1c:1d:d3:e2:54:fc</span><br><br>
+                            • Reserve 1 static IP address for MAC address: <span id="macAddress" style="font-family: monospace; background: #f1f3f4; padding: 4px 8px; border-radius: 4px; font-weight: bold;">{{MAC_ADDRESS_PLACEHOLDER}}</span><br><br>
                             • 4 hostnames for Main, API, SSO, Proxy + 4 DNS A records point to same static IP<br><br>
                             • 1 Wildcard SSL Certificate for all services
                         </div>
@@ -484,6 +338,28 @@
                 </div>
             </div>
 
+            <!-- Frontend Credentials Section -->
+            <div id="credentialsSection" class="section">
+                <h2 class="section-title">👤 Frontend Application Credentials</h2>
+                <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; margin-bottom: 20px;">
+                    <p style="color: #2c3e50; margin-bottom: 15px; line-height: 1.6;">
+                        Configure the credentials for users to log into the voicebot application. These are separate from system administration credentials.
+                    </p>
+                </div>
+                
+                <div class="ssl-section">
+                    <div class="form-group">
+                        <label for="FRONTEND_USERNAME">Frontend Username</label>
+                        <input type="text" id="FRONTEND_USERNAME" name="FRONTEND_USERNAME" value="" required data-field-type="username" placeholder="Enter frontend username">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="FRONTEND_PASSWORD">Frontend Password</label>
+                        <input type="text" id="FRONTEND_PASSWORD" name="FRONTEND_PASSWORD" value="" required data-field-type="password" placeholder="Enter frontend password">
+                    </div>
+                </div>
+            </div>
+
             <!-- Next Button -->
             <button type="button" id="nextButton" class="next-button" onclick="nextPart()">Next</button>
         </div>
@@ -502,11 +378,11 @@
                 cert: /-----BEGIN CERTIFICATE-----[\s\S]*?-----END CERTIFICATE-----/,
                 key: /-----BEGIN PRIVATE KEY-----[\s\S]*?-----END PRIVATE KEY-----/
             },
-            stepNames: ['All Services', 'SSL Certificate']
+            stepNames: ['All Services', 'SSL Certificate', 'Frontend Credentials']
         };
 
-        let currentPart = 0; // 0: intro, 1: hostnames, 2: ssl
-        const totalParts = 2;
+        let currentPart = 0; // 0: intro, 1: hostnames, 2: ssl, 3: credentials
+        const totalParts = 3;
 
         function validateField(element) {
             const content = element.value.trim();
@@ -572,6 +448,15 @@
                     const keyValid = CONFIG.validation.key.test(key);
                     isValid = certValid && keyValid;
                 }
+            } else if (currentPart === 3) {
+                // Step 3: Check frontend credentials
+                const usernameElement = document.getElementById('FRONTEND_USERNAME');
+                const passwordElement = document.getElementById('FRONTEND_PASSWORD');
+                
+                const username = usernameElement?.value.trim() || '';
+                const password = passwordElement?.value.trim() || '';
+                
+                isValid = username.length > 0 && password.length > 0;
             }
             
             // Update button state
@@ -632,7 +517,11 @@
             }
 
             // Hide current section
-            const currentSectionName = currentPart === 1 ? 'allServicesSection' : 'wildcardSection';
+            let currentSectionName = '';
+            if (currentPart === 1) currentSectionName = 'allServicesSection';
+            else if (currentPart === 2) currentSectionName = 'wildcardSection';
+            else if (currentPart === 3) currentSectionName = 'credentialsSection';
+            
             document.getElementById(currentSectionName).classList.remove('active');
             
             currentPart++;
@@ -643,7 +532,10 @@
             }
 
             // Show next section
-            const nextSectionName = currentPart === 2 ? 'wildcardSection' : '';
+            let nextSectionName = '';
+            if (currentPart === 2) nextSectionName = 'wildcardSection';
+            else if (currentPart === 3) nextSectionName = 'credentialsSection';
+            
             document.getElementById(nextSectionName).classList.add('active');
             updateProgress();
             
@@ -683,6 +575,12 @@
                     wildcard: {
                         cert: document.getElementById('SSL_CERT_WILDCARD').value,
                         key: document.getElementById('SSL_KEY_WILDCARD').value
+                    }
+                },
+                credentials: {
+                    frontend: {
+                        username: document.getElementById('FRONTEND_USERNAME').value,
+                        password: document.getElementById('FRONTEND_PASSWORD').value
                     }
                 }
             };
@@ -769,6 +667,13 @@
             });
             
             document.querySelectorAll('input[data-field-type="hostname"]').forEach(input => {
+                ['input', 'blur'].forEach(event => {
+                    input.addEventListener(event, () => validateCurrentStepAndUpdateButton());
+                });
+            });
+            
+            // Add event listeners for frontend credentials
+            document.querySelectorAll('input[data-field-type="username"], input[data-field-type="password"]').forEach(input => {
                 ['input', 'blur'].forEach(event => {
                     input.addEventListener(event, () => validateCurrentStepAndUpdateButton());
                 });
